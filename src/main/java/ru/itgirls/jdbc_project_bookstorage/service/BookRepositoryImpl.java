@@ -17,7 +17,7 @@ public class BookRepositoryImpl implements BookRepository {
     @Autowired
     private DataSource dataSource;
 
-    public BookRepositoryImpl(DataSource datasource) {
+    public BookRepositoryImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
