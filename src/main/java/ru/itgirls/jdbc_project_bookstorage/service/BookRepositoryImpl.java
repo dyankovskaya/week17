@@ -49,7 +49,7 @@ public class BookRepositoryImpl implements BookRepository {
             preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    return convertRowToBook(resultSet); // Исправлено имя метода
+                    return convertRowToBook(resultSet);
                 } else {
                     throw new NoSuchElementException("Книга с заданным id не найдена.");
                 }
