@@ -29,9 +29,9 @@ public class BookController {
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
         try {
             Book book = bookRepository.findBookById(id);
-            return ResponseEntity.ok(book); // Возвращаем 200 OK и книгу
+            return ResponseEntity.ok(book);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build(); // Возвращаем 404 Not Found
+            return ResponseEntity.notFound().build();
         }
     }
 }
