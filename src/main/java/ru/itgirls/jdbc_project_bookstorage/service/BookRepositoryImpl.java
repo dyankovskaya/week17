@@ -9,8 +9,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 
 @Repository
 public class BookRepositoryImpl implements BookRepository {
@@ -21,7 +24,6 @@ public class BookRepositoryImpl implements BookRepository {
         this.dataSource = dataSource;
     }
 
-
     @Override
     public List<Book> findAllBooks() {
         List<Book> result = new ArrayList<>();
@@ -30,7 +32,7 @@ public class BookRepositoryImpl implements BookRepository {
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SQL_findAllBooks)) {
             while (resultSet.next()) {
-                Book book = converRowToBook(resultSet);
+                Book book = convertRowToBook(resultSet);
                 result.add(book);
             }
         } catch (SQLException e) {
@@ -39,7 +41,25 @@ public class BookRepositoryImpl implements BookRepository {
         return result;
     }
 
-    private Book converRowToBook(ResultSet resultSet) throws SQLException {
+    @Override
+    public Book findBookById(Long id) {
+        String SQL_findBookById = "select * from books where id = ?;";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SQL_findBookById)) {
+            preparedStatement.setLong(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return convertRowToBook(resultSet); // Исправлено имя метода
+                } else {
+                    throw new NoSuchElementException("Книга с заданным id не найдена.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Book convertRowToBook(ResultSet resultSet) throws SQLException {
         Long id = resultSet.getLong("id");
         String name = resultSet.getString("name");
         return new Book(id, name);
